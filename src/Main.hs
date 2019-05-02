@@ -1,9 +1,11 @@
 import System.Environment 
 import Data.Char (isSpace)
+import Data.Word
 
 data Ast = Get | Put | While AstList | Add | Sub | Next | Last
   deriving (Eq,Show)
 
+type State = (Integer, [Word8])
 type AstList = [Ast]
 
 trim :: String -> String
@@ -32,9 +34,8 @@ parseProgram ('[':xs) = (While loop):(parseProgram follows)
   where (follows, loop) = parsePortion xs
 parseProgram (x:xs) = (parseToken x):parseProgram xs
 
-interpret :: AstList -> IO ()
-interpret [] = do return ()
-interpret (x:xs) = do
+interpretStep :: Ast -> IO ()
+interpretStep x = do 
   case x of
     Get -> return ()
     Put -> return ()
@@ -42,9 +43,16 @@ interpret (x:xs) = do
     Add -> return ()
     Sub -> return ()
 
+interpret :: AstList -> IO ()
+interpret [] = do return ()
+interpret (x:xs) = do
+  _ <- interpretStep x
+  interpret xs
+
 main = do
   args <- getArgs
   contents <- readFile (head args)
   putStrLn contents
   let parsed = parseProgram (trim contents)
   putStrLn (show parsed)
+  interpret parsed
