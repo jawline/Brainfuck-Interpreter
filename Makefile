@@ -5,7 +5,8 @@ build:
 	ghc --make -O3 -isrc -outputdir ./bin/ -o ./bin/main src/Main.hs
 
 test: build
-	echo "a" | ./bin/main tests/test.bf
+	./bin/main tests/simple.bf
+	./bin/main tests/test.bf
 
 clean:
 	rm -rf ./bin/
