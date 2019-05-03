@@ -11,7 +11,5 @@ trim = f . f
 main = do
   args <- getArgs
   contents <- readFile (head args)
-  putStrLn contents
   let parsed = parseProgram (trim contents)
-  putStrLn (show parsed)
   interpret initialState parsed
